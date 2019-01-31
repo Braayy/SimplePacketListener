@@ -12,7 +12,19 @@ public class Util {
 
             return Optional.ofNullable(field.get(obj));
         } catch (Exception e) {
+            e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    public static void setFieldValue(Class<?> clazz, Object obj, String name, Object value) {
+        try {
+            Field field = clazz.getDeclaredField(name);
+            field.setAccessible(true);
+
+            field.set(obj, value);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,4 +1,4 @@
-name: PacketListener
+name: SimplePacketListener
 main: braayy.fun.packetlistener.SimplePacketListener
 version: 1.0
 author: Braayy

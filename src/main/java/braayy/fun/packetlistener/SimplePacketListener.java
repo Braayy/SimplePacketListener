@@ -23,20 +23,20 @@ public class SimplePacketListener extends JavaPlugin {
 
         if (f.size() > 0) {
             ChannelFuture future = (ChannelFuture) f.get(0);
-            if (future.channel().pipeline().names().contains("BraayyPacketInjector")) {
-                future.channel().pipeline().remove("BraayyPacketInjector");
+            if (future.channel().pipeline().names().contains("SimplePacketInjector")) {
+                future.channel().pipeline().remove("SimplePacketInjector");
             }
 
-            future.channel().pipeline().addFirst("BraayyPacketInjector", new ChannelDuplexHandler() {
+            future.channel().pipeline().addFirst("SimplePacketInjector", new ChannelDuplexHandler() {
                 @Override
                 public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                     Channel clientChannel = (Channel) msg;
 
-                    clientChannel.pipeline().addLast("BraayyPacketInjector", new ChannelDuplexHandler() {
+                    clientChannel.pipeline().addLast("SimplePacketInjector", new ChannelDuplexHandler() {
                         @Override
                         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                            ctx.channel().pipeline().addBefore("packet_handler", "BraayyPacketHandler", new ChannelPacketListener());
-                            ctx.channel().pipeline().remove("BraayyPacketInjector");
+                            ctx.channel().pipeline().addBefore("packet_handler", "SimplePacketListener", new ChannelPacketListener());
+                            ctx.channel().pipeline().remove("SimplePacketInjector");
 
                             super.channelRead(ctx, msg);
                         }
@@ -45,6 +45,20 @@ public class SimplePacketListener extends JavaPlugin {
                     super.channelRead(ctx, msg);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        MinecraftServer server = ((CraftServer) getServer()).getServer();
+        ServerConnection serverConnection = server.getServerConnection();
+        List f = (List) Util.getFieldValue(ServerConnection.class, serverConnection, "f").orElse(new ArrayList<>());
+
+
+        if (f.size() > 0) {
+            ChannelFuture future = (ChannelFuture) f.get(0);
+
+            future.channel().pipeline().remove("SimplePacketInjector");
         }
     }
 
