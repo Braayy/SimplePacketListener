@@ -1,0 +1,4 @@
+name: PacketListener
+main: braayy.fun.packetlistener.PacketListenerPlugin
+version: 1.0
+author: Braayy
